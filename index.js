@@ -9,14 +9,24 @@ const userRoutes = require('./Routes/userRoutes')
 const chatRoutes = require('./Routes/chatRoutes')
 const messageRoutes = require('./Routes/messageRoutes');
 const path = require('path');
+var cors = require('cors');
+
 const app = express();
 
-
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "https://sayhiii.netlify.app/");
+    res.header(
+        "Access-Control-Allow-Headers",
+        "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
+    next();
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/user', userRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/message', messageRoutes);
+
 
 
 //-------------------------Deployment-------------------------------------------------
