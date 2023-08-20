@@ -13,6 +13,7 @@ var cors = require('cors');
 
 const app = express();
 
+app.use(cors({ origin: true, credentials: true }));
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "https://sayhiii.netlify.app/");
     res.header(
@@ -51,6 +52,9 @@ app.use('/api/message', messageRoutes);
 
 //-------------------------Deployment--------------------------------------------------
 
+app.get("/",(req,res)=>{
+    res.send('Api running successfully');
+})
 
 
 
