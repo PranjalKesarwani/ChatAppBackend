@@ -67,7 +67,7 @@ const server = app.listen(PORT, () => {
 const io = require('socket.io')(server, {
     pingTimeout: 60000,   //This means socket connection will wait for 60seconds before it shuts the connection as connection will waste the bandwith, suppose after last message user didn't send the message then after one minute connection will be closed
     cors: {
-        origin: "http://127.0.0.1:5173"
+        origin: "https://sayhiii.netlify.app"
     }
 });
 
