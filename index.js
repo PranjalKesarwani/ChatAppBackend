@@ -12,10 +12,11 @@ const path = require('path');
 var cors = require('cors');
 
 const app = express();
+const origin = 'http://127.0.0.1:5173'
+// const origin = 'https://sayhiii.netlify.app'
 
 app.use(cors({
-    // origin: 'http://127.0.0.1:5173', 
-    origin: 'https://sayhiii.netlify.app', 
+    origin: origin, 
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
@@ -27,28 +28,6 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/message', messageRoutes);
 
 
-
-//-------------------------Deployment-------------------------------------------------
-
-
-// const __dirname1 = path.resolve();
-// console.log(__dirname1);
-// if(process.env.NODE_ENV === 'production'){
-
-//     app.use(express.static(path.join(__dirname1,'../frontend/dist'))); //i am establishing the path from current working directory to the build folder of frontend
-
-//     app.get('*',(req,res)=>{
-//         res.sendFile(path.resolve(__dirname1,"../frontend","dist","index.html"));
-//     })
-
-// }else{
-//     app.get("/",(req,res)=>{
-//         res.send("API running successfully!");
-//     })
-// }
-
-
-//-------------------------Deployment--------------------------------------------------
 
 app.get("/",(req,res)=>{
     res.send('Api running successfully');
@@ -64,12 +43,15 @@ const server = app.listen(PORT, () => {
     console.log(`Server started on PORT: ${PORT}`.yellow.bold);
 })
 
+//Socket server setup: we are adding a socket server layer over original server
 const io = require('socket.io')(server, {
     pingTimeout: 60000,   //This means socket connection will wait for 60seconds before it shuts the connection as connection will waste the bandwith, suppose after last message user didn't send the message then after one minute connection will be closed
     cors: {
-        origin: "https://sayhiii.netlify.app"
+        origin: origin
     }
 });
+
+//After creation of io socket server, now we will establish a connection
 
 io.on("connection", (socket) => {
     console.log('connected to socket.io');
@@ -78,12 +60,12 @@ io.on("connection", (socket) => {
         console.log(userData._id);
         socket.emit('connected');
 
-    });
+    }); //Here we creating the room of the individual user
 
     socket.on('join chat', (room) => {  //when another user will join it will be connected to the room and get joint
         socket.join(room);
         console.log("User Joined Room: " + room);
-    });
+    }); //Here we created the room for the chatId and then joined the user's room from this room
 
     socket.on('typing', (room) => socket.in(room).emit("typing"));
     socket.on('stop typing', (room) => socket.in(room).emit('stop typing'));
